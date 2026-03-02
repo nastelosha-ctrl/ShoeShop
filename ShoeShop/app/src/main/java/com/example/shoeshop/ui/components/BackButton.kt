@@ -16,7 +16,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.example.shoeshop.R
-
+//Скворцова Анастасия
+//02.03.2026
+//Кнопка для действия "Вернуться назад"
 @Composable
 fun BackButton(
     onClick: () -> Unit,

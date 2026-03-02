@@ -91,14 +91,14 @@ fun RegisterAccount(modifier: Modifier = Modifier,
         ) {
             Text(
                 text = stringResource(id = R.string.register),
-                style = MaterialTheme.typography.headlineMedium, // Используем тему
+                style = MaterialTheme.typography.displayMedium, // Используем тему
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
             Text(
                 text = stringResource(id = R.string.details),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(bottom = 40.dp)
             )
@@ -107,7 +107,7 @@ fun RegisterAccount(modifier: Modifier = Modifier,
         // Поле "Имя"
         Text(
             text = stringResource(id = R.string.name),
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(bottom = 8.dp)
@@ -143,7 +143,7 @@ fun RegisterAccount(modifier: Modifier = Modifier,
         // Поле "Email"
         Text(
             text = stringResource(id = R.string.email),
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(bottom = 8.dp)
@@ -180,7 +180,7 @@ fun RegisterAccount(modifier: Modifier = Modifier,
         // Поле "Пароль"
         Text(
             text = stringResource(id = R.string.pass),
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(bottom = 8.dp)
@@ -288,7 +288,7 @@ fun RegisterAccount(modifier: Modifier = Modifier,
 
             Text(
                 text = stringResource(id = R.string.agree),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = hintColor,
                 modifier = Modifier.weight(1f)
             )
@@ -319,8 +319,8 @@ fun RegisterAccount(modifier: Modifier = Modifier,
                         withStyle(
                             style = SpanStyle(
                                 color = hintColor,
-                                fontFamily = MaterialTheme.typography.bodyMedium.fontFamily,
-                                fontSize = MaterialTheme.typography.bodyMedium.fontSize
+                                fontFamily = MaterialTheme.typography.bodyLarge.fontFamily,
+                                fontSize = MaterialTheme.typography.bodyLarge.fontSize
                             )
                         ) {
                             append(stringResource(id = R.string.have_acc))
