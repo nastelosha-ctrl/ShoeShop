@@ -10,18 +10,7 @@ import androidx.compose.ui.unit.sp
 import com.example.shoeshop.R
 
 // Создаем Typography с вашими стилями
-val ralewayRegular = FontFamily(
-    Font(R.font.raleway)
-)
-val ralewayBold = FontFamily(
-    Font(R.font.raleway_bold)
-)
-val ralewaySemiBold = FontFamily(
-    Font(R.font.raleway_semibold)
-)
-val ralewayMedium = FontFamily(
-    Font(R.font.raleway_medium)
-)
+
 val Typography = Typography(
     // Heading Regular 34
     displayLarge = TextStyle(
