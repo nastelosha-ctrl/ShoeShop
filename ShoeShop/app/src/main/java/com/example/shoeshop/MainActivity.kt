@@ -10,7 +10,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.example.shoeshop.data.navigation.NavigationApp
+
 import com.example.shoeshop.ui.screens.RegisterAccount
 import com.example.shoeshop.ui.theme.ShoeShopTheme
 
@@ -21,9 +23,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             ShoeShopTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    RegisterAccount(
-
-                    )
+                    val navController = rememberNavController()
+                    NavigationApp(navController = navController)
                 }
             }
         }

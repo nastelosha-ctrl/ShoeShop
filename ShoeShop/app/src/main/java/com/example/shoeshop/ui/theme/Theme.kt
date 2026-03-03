@@ -1,7 +1,7 @@
 package com.example.shoeshop.ui.theme
 
 
-import android.graphics.fonts.Font
+
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -15,6 +15,7 @@ import androidx.compose.ui.text.googlefonts.Font
 
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import com.example.shoeshop.R
+
 
 // Инициализация Google Fonts Provider
 private val fontProvider = androidx.compose.ui.text.googlefonts.GoogleFont.Provider(

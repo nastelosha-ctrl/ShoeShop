@@ -42,12 +42,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.shoeshop.R
 import com.example.shoeshop.ui.components.BackButton
 import com.example.shoeshop.ui.components.DisableButton
-import com.example.shoeshop.ui.theme.ShoeShopTheme
+
+import androidx.compose.material3.AlertDialog
 
 //Экран для регистрации
 //Скворцова Анастасия
@@ -63,6 +63,8 @@ fun RegisterAccount(modifier: Modifier = Modifier,
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var isChecked by remember { mutableStateOf(false) }
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
 
     val isFormValid = name.isNotBlank() &&
             email.isNotBlank() &&
@@ -74,6 +76,45 @@ fun RegisterAccount(modifier: Modifier = Modifier,
     val borderColor = MaterialTheme.colorScheme.outline
     val checkboxBorderColor = MaterialTheme.colorScheme.outlineVariant
 
+    // --- ФУНКЦИЯ ПРОВЕРКИ EMAIL ПО ЗАДАННОМУ ПАТТЕРНУ ---
+    fun isValidEmail(email: String): Boolean {
+        // Паттерн: name@domenname.ru, где:
+        // - имя и домен: только маленькие буквы и цифры ([a-z0-9]+)
+        // - старший домен (.ru, .com и т.д.): только буквы, количество больше двух ([a-z]{2,})
+        val emailPattern = "^[a-z0-9]+@[a-z0-9]+\\.[a-z]{2,}$".toRegex()
+        return emailPattern.matches(email)
+    }
+    // --- ФУНКЦИЯ-ОБРАБОТЧИК НАЖАТИЯ КНОПКИ РЕГИСТРАЦИИ ---
+    fun handleRegisterClick() {
+        if (isValidEmail(email)) {
+            // Если email корректен, вызываем внешнюю функцию (пока пустую)
+            // Здесь можно добавить навигацию или вызов ViewModel
+            onRegisterClick()
+        } else {
+            // Если email НЕ корректен, показываем диалог с ошибкой
+            errorMessage = "Пожалуйста, введите корректный email.\n" +
+                    "Формат: имя@домен.ру\n" +
+                    "Имя и домен могут содержать только маленькие латинские буквы и цифры."
+            showErrorDialog = true
+        }
+    }
+
+    // --- ДИАЛОГОВОЕ ОКНО С ОШИБКОЙ ---
+    if (showErrorDialog) {
+        AlertDialog(
+            onDismissRequest = { showErrorDialog = false },
+            title = { Text("Ошибка ввода") },
+            text = { Text(errorMessage) },
+            confirmButton = {
+                TextButton(
+                    onClick = { showErrorDialog = false }
+                ) {
+                    Text("OK")
+                }
+            },
+            icon = { /* Иконка ошибки, если нужно */ }
+        )
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -299,7 +340,7 @@ fun RegisterAccount(modifier: Modifier = Modifier,
         // Кнопка регистрации
         DisableButton(
             text = stringResource(id = R.string.register),
-            onClick = onRegisterClick,
+            onClick = { handleRegisterClick() },
             enabled = isFormValid
         )
 
@@ -344,10 +385,3 @@ fun RegisterAccount(modifier: Modifier = Modifier,
     
 }
 
-@Preview
-@Composable
-private fun RegisterAccountPrev() {
-    ShoeShopTheme {
-        RegisterAccount()
-    }
-}

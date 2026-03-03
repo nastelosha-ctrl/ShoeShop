@@ -1,13 +1,12 @@
-// UserManagementService.kt
-package com.example.shoeshop.data.service
 
-import com.example.myfirstproject.data.model.OTPVerificationRequest
-import com.example.myfirstproject.data.model.OTPVerificationResponse
-import com.example.myfirstproject.data.model.ResendOTPResponse
-import com.example.myfirstproject.data.model.SignInRequest
-import com.example.myfirstproject.data.model.SignInResponse
-import com.example.myfirstproject.data.model.SignUpRequest
-import com.example.myfirstproject.data.model.SignUpResponse
+
+import com.example.shoeshop.data.model.OTPVerificationRequest
+import com.example.shoeshop.data.model.OTPVerificationResponse
+import com.example.shoeshop.data.model.ResendOTPResponse
+import com.example.shoeshop.data.model.SignInRequest
+import com.example.shoeshop.data.model.SignInResponse
+import com.example.shoeshop.data.model.SignUpRequest
+import com.example.shoeshop.data.model.SignUpResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Headers

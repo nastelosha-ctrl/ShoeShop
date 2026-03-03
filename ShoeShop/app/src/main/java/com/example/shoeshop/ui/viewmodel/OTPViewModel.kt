@@ -1,10 +1,12 @@
-package com.example.myfirstproject.ui.viewModel
+package com.example.shoeshop.ui.viewmodel
+
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myfirstproject.data.RetrofitInstance
-import com.example.myfirstproject.data.model.OTPVerificationRequest
+import com.example.shoeshop.data.RetrofitInstance
+import com.example.shoeshop.data.model.OTPVerificationRequest
+
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

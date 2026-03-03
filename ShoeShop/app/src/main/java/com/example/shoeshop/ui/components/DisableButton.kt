@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.example.shoeshop.R
 import com.example.shoeshop.ui.theme.AppTypography
 
+
 //Скворцова Анастасия
 //02.03.2026
 //Кнопка для действия "Зарегистрироваться"

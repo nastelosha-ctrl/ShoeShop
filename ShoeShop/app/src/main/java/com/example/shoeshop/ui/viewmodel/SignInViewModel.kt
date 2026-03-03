@@ -1,11 +1,11 @@
-// SignInViewModel.kt
-package com.example.myfirstproject.ui.viewModel
+package com.example.shoeshop.ui.viewmodel
+
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myfirstproject.data.RetrofitInstance
-import com.example.myfirstproject.data.model.SignInRequest
+import com.example.shoeshop.data.RetrofitInstance
+import com.example.shoeshop.data.model.SignInRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -26,7 +26,6 @@ class SignInViewModel : ViewModel() {
                         // Сохраняем токен
                         saveAuthToken(signInResponse.access_token)
                         saveRefreshToken(signInResponse.refresh_token)
-                        saveUserData(signInResponse.user)
 
                         Log.v("signIn", "User authenticated: ${signInResponse.user.email}")
                         _signInState.value = SignInState.Success
@@ -68,9 +67,6 @@ class SignInViewModel : ViewModel() {
         Log.d("Auth", "Refresh token saved: ${token.take(10)}...")
     }
 
-    private fun saveUserData(user: com.example.myfirstproject.data.model.User) {
-        Log.d("Auth", "User data saved: ${user.email}")
-    }
 
     fun resetState() {
         _signInState.value = SignInState.Idle

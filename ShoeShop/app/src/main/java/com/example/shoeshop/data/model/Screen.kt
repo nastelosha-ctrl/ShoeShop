@@ -1,4 +1,4 @@
-package com.example.myfirstproject.data.model
+
 
 sealed class Screen {
     object SignUp : Screen()

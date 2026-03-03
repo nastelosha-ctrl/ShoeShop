@@ -1,5 +1,4 @@
 package com.example.shoeshop.data
-import com.example.myfirstproject.data.service.UserManagementService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -8,7 +7,7 @@ import java.net.InetSocketAddress
 import java.net.Proxy
 
 object RetrofitInstance {
-    const val SUBABASE_URL = "https://jydrvxhcqgpdmpeesvls.supabase.co"
+    const val SUBABASE_URL = "https://jydrvxhcqgpdmpeesvls.supabase.co/"
 
     private val proxy= Proxy(Proxy.Type.HTTP, InetSocketAddress("10.207.106.59",3128))
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
