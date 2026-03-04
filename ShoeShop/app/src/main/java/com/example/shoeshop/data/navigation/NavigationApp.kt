@@ -12,7 +12,7 @@ import com.example.shoeshop.ui.screens.*
 fun NavigationApp(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = "sign_up"
+        startDestination = "start_menu"
     ) {
         composable("sign_up") {
             RegisterAccount(
@@ -62,6 +62,11 @@ fun NavigationApp(navController: NavHostController) {
         }
         composable("home") {
             HomeScreen({},{},{})
+        }
+        composable("start_menu") {
+            OnboardScreen (
+                onGetStartedClick = { navController.navigate("sign_up") },
+            )
         }
 
 
