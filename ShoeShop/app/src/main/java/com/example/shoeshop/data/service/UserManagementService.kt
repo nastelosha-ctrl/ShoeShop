@@ -1,8 +1,7 @@
 
 
 import com.example.shoeshop.data.model.ForgotPasswordRequest
-import com.example.shoeshop.data.model.OTPVerificationRequest
-import com.example.shoeshop.data.model.OTPVerificationResponse
+
 import com.example.shoeshop.data.model.ResendOTPResponse
 import com.example.shoeshop.data.model.SignInRequest
 import com.example.shoeshop.data.model.SignInResponse
@@ -15,7 +14,7 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
 
-const val API_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZHJ2eGhjcWdwZG1wZWVzdmxzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0Nzc4NTgsImV4cCI6MjA4ODA1Mzg1OH0.Er7dbKS-8GnU5iZ2lh83oxkn3qqDh6E9gamM74s4Olc"
+const val API_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6enhleXJyZnRieW1qaGhyYWx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwODEzMzgsImV4cCI6MjA4NzY1NzMzOH0.Lez4MrjuAp7ZHin_CbwUtntuikLnQMyQICcBZNvjq_c"
 interface UserManagementService {
 
     @Headers(
@@ -40,13 +39,11 @@ interface UserManagementService {
     suspend fun logout(): Response<Unit>
 
     @Headers(
-        "apikey: $API_KEY",
-        "Authorization: Bearer $API_KEY",
-        "Content-Type: application/json",
-        "Prefer: return=minimal"
+        "apikey: ${API_KEY}",
+        "Content-Type: application/json"
     )
     @POST("auth/v1/verify")
-    suspend fun verifyOTP(@Body request: OTPVerificationRequest): Response<OTPVerificationResponse>
+    suspend fun verifyOtp(@Body verifyOtpRequest: VerifyOtpRequest): Response<VerifyOtpResponse>
 
     @Headers(
         "apikey: $API_KEY",
@@ -70,10 +67,20 @@ interface UserManagementService {
         "apikey: ${API_KEY}",
         "Content-Type: application/json"
     )
+    @POST("auth/v1/token?grant_type=refresh_token")
+    suspend fun refreshToken(
+        @Body request: Map<String, String>
+    ): Response<Map<String, Any>>
+
+    @Headers(
+        "apikey: ${API_KEY}",
+        "Content-Type: application/json"
+    )
     @PUT("auth/v1/user")
     suspend fun changePassword(
-        @Header("Authorization") token: String, // Bearer токен пользователя
+        @Header("Authorization") authorization: String, // Bearer токен
         @Body changePasswordRequest: ChangePasswordRequest
     ): Response<ChangePasswordResponse>
+
 
 }

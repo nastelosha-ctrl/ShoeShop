@@ -14,34 +14,60 @@ fun NavigationApp(navController: NavHostController) {
         navController = navController,
         startDestination = "sign_up"
     ) {
-        // Экран регистрации
         composable("sign_up") {
             RegisterAccount(
-                onBackClick = {  },
-                onRegisterClick = {  },
-                onLoginClick = {
-                    // ПЕРЕХОД НА ЭКРАН ВХОДА
-                    navController.navigate("sign_in")
-                }
+                onSignInClick = { navController.navigate("sign_in") },
+                onSignUpClick = { navController.navigate("email_verification") }
+            )
+        }
+        composable("sign_in") {
+            SignInScreen(
+                onForgotPasswordClick = { navController.navigate("forgot_password") },
+                onSignInClick = { navController.navigate("home") },
+                onSignUpClick = { navController.navigate("sign_up") }
+
+            )
+        }
+        composable("forgot_password") {
+            ForgotPasswordScreen(
+                onNavigateToOtpVerification = { navController.navigate("reset_password") },
+                onBackClick = {navController.navigate("sign_in")}
             )
         }
 
-        // Экран входа
-        composable("sign_in") {
-            SignInScreen(
-                onForgotPasswordClick = { },
-                onSignInClick = { },
-                onSignUpClick = {
-                    // ВОЗВРАТ НА ЭКРАН РЕГИСТРАЦИИ
-                    navController.navigate("sign_up")
-                }
+        composable("email_verification") {
+            EmailVerificationScreen(
+                onSignInClick = { navController.navigate("sign_in") },
+                onVerificationSuccess = { navController.navigate("home") }
+
             )
         }
+        composable("reset_password") {
+            RecoveryVerificationScreen(
+                onSignInClick = {navController.navigate("sign_in")},
+                onResetPasswordClick = { resetToken ->  // Токен приходит сюда
+                    // Передаем токен в маршрут
+                    navController.navigate("create_password/$resetToken")
+                }
+
+            )
+        }
+        composable("create_password/{resetToken}") { backStackEntry ->
+            val resetToken = backStackEntry.arguments?.getString("resetToken") ?: ""
+
+            CreateNewPasswordScreen(
+                userToken = resetToken,  // Передаем токен в экран
+                onPasswordChanged = { navController.navigate("sign_in") }
+            )
+        }
+        composable("home") {
+            HomeScreen({},{},{})
+        }
+
+
+
+
+
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun NavigationAppPreview() {
-
-}

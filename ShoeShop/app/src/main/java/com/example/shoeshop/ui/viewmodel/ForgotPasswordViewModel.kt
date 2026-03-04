@@ -24,7 +24,8 @@ class ForgotPasswordViewModel : ViewModel() {
     val email: StateFlow<String> = _email
 
     // Флаг валидности email
-    val isEmailValid = MutableStateFlow(false)
+    private val _isEmailValid = MutableStateFlow(false)
+    val isEmailValid: StateFlow<Boolean> = _isEmailValid
 
     fun updateEmail(email: String) {
         _email.value = email
@@ -33,7 +34,7 @@ class ForgotPasswordViewModel : ViewModel() {
 
     private fun validateEmail(email: String) {
         val emailPattern = "[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}".toRegex()
-        isEmailValid.value = email.matches(emailPattern)
+        _isEmailValid.value = email.matches(emailPattern)
     }
 
     /**
@@ -41,7 +42,7 @@ class ForgotPasswordViewModel : ViewModel() {
      */
     fun recoverPassword() {
         // Проверяем валидность email
-        if (!isEmailValid.value) {
+        if (!_isEmailValid.value) {
             _passwordRecoveryState.value = PasswordRecoveryState.Error("Please enter a valid email address")
             return
         }
@@ -67,20 +68,20 @@ class ForgotPasswordViewModel : ViewModel() {
                     response.body()?.let { recoveryResponse ->
                         Log.d("ForgotPasswordViewModel", "Recovery response: $recoveryResponse")
 
-                        // Supabase может возвращать сообщение об успехе или ошибку в теле ответа
+                        // Проверяем, есть ли ошибка в теле ответа
                         if (recoveryResponse.error != null) {
                             // Есть ошибка в теле ответа
                             _passwordRecoveryState.value = PasswordRecoveryState.Error(
                                 parseRecoveryError(recoveryResponse.error)
                             )
                         } else {
-                            // Успешный ответ
+                            // Успешный ответ - используем Success с сообщением
                             _passwordRecoveryState.value = PasswordRecoveryState.Success(
                                 "Password reset email has been sent to ${_email.value}"
                             )
                         }
                     } ?: run {
-                        // Пустое тело ответа
+                        // Пустое тело ответа - всё равно считаем успехом
                         _passwordRecoveryState.value = PasswordRecoveryState.Success(
                             "Password reset email has been sent to ${_email.value}"
                         )

@@ -9,10 +9,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.shoeshop.R
 import com.example.shoeshop.ui.components.BackButton
@@ -23,64 +25,73 @@ import kotlinx.coroutines.launch
 import kotlin.text.isNotEmpty
 
 @OptIn(ExperimentalMaterial3Api::class)
-
 @Composable
 fun ForgotPasswordScreen(
-    modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    onNavigateToOtpVerification: (email: String) -> Unit = {},
+    onNavigateToOtpVerification: (email: String) -> Unit,
     viewModel: ForgotPasswordViewModel = viewModel()
 ) {
-    val uiState by viewModel.passwordRecoveryState.collectAsState()
-    val email by viewModel.email.collectAsState()
-    val isEmailValid by viewModel.isEmailValid.collectAsState()
+    val recoveryState by viewModel.passwordRecoveryState.collectAsStateWithLifecycle()
+    val email by viewModel.email.collectAsStateWithLifecycle()
+    val isEmailValid by viewModel.isEmailValid.collectAsStateWithLifecycle()
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
-    // Состояние для отображения AlertDialog
     var showSuccessDialog by remember { mutableStateOf(false) }
+    var successMessage by remember { mutableStateOf("") }
 
-    // Обработка состояний
-    LaunchedEffect(uiState) {
-        when (uiState) {
+    // Следим за состоянием
+    LaunchedEffect(recoveryState) {
+        when (recoveryState) {
             is PasswordRecoveryState.Success -> {
+                successMessage = (recoveryState as PasswordRecoveryState.Success).message
                 showSuccessDialog = true
+                viewModel.resetState()
             }
             is PasswordRecoveryState.Error -> {
+                val error = (recoveryState as PasswordRecoveryState.Error).message
                 scope.launch {
                     snackbarHostState.showSnackbar(
-                        (uiState as PasswordRecoveryState.Error).message,
-                        withDismissAction = true
+                        message = error,
+                        duration = SnackbarDuration.Long
                     )
                 }
+                viewModel.resetState()
             }
             else -> {}
         }
     }
 
-    // Отображаем AlertDialog при успешной отправке
-    if (showSuccessDialog && email.isNotEmpty()) {
-        PasswordResetAlertDialog(
-            onConfirm = {
-                showSuccessDialog = false
-                onNavigateToOtpVerification(email)
-            },
-            onDismiss = {
-                showSuccessDialog = false
+    // Диалог успеха
+    if (showSuccessDialog) {
+        AlertDialog(
+            onDismissRequest = { showSuccessDialog = false },
+            title = { Text("Код отправлен") },
+            text = { Text(successMessage) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showSuccessDialog = false
+                        onNavigateToOtpVerification(email)
+                    }
+                ) {
+                    Text("OK")
+                }
             }
         )
     }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
-    )
-    { paddingValues ->
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(23.dp)
-                .background(Color.White),
+                .background(MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // Кнопка назад
@@ -88,13 +99,10 @@ fun ForgotPasswordScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Start
             ) {
-                BackButton(
-                    onClick = onBackClick
-                )
+                BackButton(onClick = onBackClick)
             }
 
             // Заголовок
-
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -169,10 +177,10 @@ fun ForgotPasswordScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                enabled = isEmailValid && uiState !is PasswordRecoveryState.Loading,
+                enabled = isEmailValid && recoveryState !is PasswordRecoveryState.Loading,
                 shape = MaterialTheme.shapes.medium
             ) {
-                if (uiState is PasswordRecoveryState.Loading) {
+                if (recoveryState is PasswordRecoveryState.Loading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(20.dp),
                         strokeWidth = 2.dp,
