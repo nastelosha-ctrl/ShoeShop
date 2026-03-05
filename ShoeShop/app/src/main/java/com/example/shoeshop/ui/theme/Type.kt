@@ -14,7 +14,7 @@ import com.example.shoeshop.R
 val Typography = Typography(
     // Heading Regular 34
     displayLarge = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 34.sp,
         lineHeight = 40.sp
@@ -22,7 +22,7 @@ val Typography = Typography(
 
     // Heading Regular 32
     displayMedium = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 32.sp,
         lineHeight = 38.sp
@@ -30,7 +30,7 @@ val Typography = Typography(
 
     // Heading Bold 30
     displaySmall = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway_bold)),
+        fontFamily = ralewayBold,
         fontWeight = FontWeight.Bold,
         fontSize = 30.sp,
         lineHeight = 36.sp
@@ -38,7 +38,7 @@ val Typography = Typography(
 
     // Heading Regular 26
     headlineLarge = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 26.sp,
         lineHeight = 32.sp
@@ -46,7 +46,7 @@ val Typography = Typography(
 
     // Heading Regular 20
     headlineMedium = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 20.sp,
         lineHeight = 24.sp
@@ -54,7 +54,7 @@ val Typography = Typography(
 
     // Body Regular 24
     headlineSmall = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 24.sp,
         lineHeight = 28.sp
@@ -62,7 +62,7 @@ val Typography = Typography(
 
     // Body SemiBold 18
     titleLarge = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway_semibold)),
+        fontFamily = ralewaySemiBold,
         fontWeight = FontWeight.SemiBold,
         fontSize = 18.sp,
         lineHeight = 24.sp
@@ -70,7 +70,7 @@ val Typography = Typography(
 
     // Body Regular 20
     titleMedium = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 20.sp,
         lineHeight = 24.sp
@@ -78,7 +78,7 @@ val Typography = Typography(
 
     // Heading SemiBold 16
     titleSmall = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway_semibold)),
+        fontFamily = ralewaySemiBold,
         fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
         lineHeight = 20.sp
@@ -86,7 +86,7 @@ val Typography = Typography(
 
     // Body Medium 16 / Body Regular 16 / Subtitle Regular 16
     bodyLarge = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 20.sp
@@ -94,7 +94,7 @@ val Typography = Typography(
 
     // Body Medium 14
     bodyMedium = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway_medium)),
+        fontFamily = ralewayMedium,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 18.sp
@@ -102,7 +102,7 @@ val Typography = Typography(
 
     // Body Regular 14
     bodySmall = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
         lineHeight = 18.sp
@@ -110,7 +110,7 @@ val Typography = Typography(
 
     // Body Regular 12
     labelMedium = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
         lineHeight = 16.sp
@@ -120,43 +120,44 @@ val Typography = Typography(
 // Дополнительные кастомные стили для более точного соответствия
 object AppTypography {
     // Heading стили
+
     val headingRegular34 = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 34.sp,
         lineHeight = 40.sp
     )
 
     val headingRegular32 = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 32.sp,
         lineHeight = 38.sp
     )
 
     val headingBold30 = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway_bold)),
+        fontFamily = ralewayBold,
         fontWeight = FontWeight.Bold,
         fontSize = 30.sp,
         lineHeight = 36.sp
     )
 
     val headingRegular26 = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 26.sp,
         lineHeight = 32.sp
     )
 
     val headingRegular20 = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 20.sp,
         lineHeight = 24.sp
     )
 
     val headingSemiBold16 = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway_semibold)),
+        fontFamily = ralewaySemiBold,
         fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
         lineHeight = 20.sp
@@ -164,7 +165,7 @@ object AppTypography {
 
     // Subtitle
     val subtitleRegular16 = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 20.sp
@@ -172,56 +173,56 @@ object AppTypography {
 
     // Body стили
     val bodyRegular24 = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 24.sp,
         lineHeight = 28.sp
     )
 
     val bodyRegular20 = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 20.sp,
         lineHeight = 24.sp
     )
 
     val bodySemiBold18 = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway_semibold)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.SemiBold,
         fontSize = 18.sp,
         lineHeight = 24.sp
     )
 
     val bodyMedium16 = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway_medium)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
         lineHeight = 20.sp
     )
 
     val bodyRegular16 = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 20.sp
     )
 
     val bodyMedium14 = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway_medium)),
+        fontFamily = ralewayMedium,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 18.sp
     )
 
     val bodyRegular14 = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
         lineHeight = 18.sp
     )
 
     val bodyRegular12 = TextStyle(
-        fontFamily = FontFamily(Font(R.font.raleway)),
+        fontFamily = ralewayRegular,
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
         lineHeight = 16.sp

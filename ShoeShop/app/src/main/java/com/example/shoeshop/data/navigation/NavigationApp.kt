@@ -1,5 +1,7 @@
 package com.example.shoeshop.data.navigation
 
+import Product
+import android.telecom.Call
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -139,9 +141,66 @@ fun NavigationApp(navController: NavHostController, modifier: Modifier = Modifie
             }
         }
 
+        composable("catalog/{category}") { backStackEntry ->
+            val category = backStackEntry.arguments?.getString("category") ?: "Outdoor"
+            CatalogScreen(
+                initialCategory = category,
+                onProductClick = { product ->
+                    navController.navigate("product_detail/${product.id}")
+                },
+                onFavoriteClick = { product, isFavorite ->
+                    // Здесь нужно получить ViewModel и вызвать toggleFavorite
+                    // Лучше передавать это через колбэк, который будет вызывать ViewModel
+                }
+            )
+        }
 
+        composable("product_detail/{productId}") { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString("productId") ?: ""
 
+            // Получаем продукт из аргументов или загружаем
+            // Для демо создаем тестовый продукт
+            val sampleProduct = Product(
+                id = productId,
+                title = "Nike Air Max 270",
+                cost = 179.39,
+                description = "Вставка Max Air 270 Обеспечивает Непревзойденный Комфорт В Течение Всего Дня. Изящный Дизайн с верхом из сетки и накладками обеспечивает воздухопроницаемость и поддержку. Идеально подходит для повседневной носки и активного отдыха.",
+                category_id = "76ab9d74-7d5b-4dee-9c67-6ed4019fa202",
+                is_best_seller = true,
+                imageUrl = null,
+                imageResId = null
+            )
 
+            DetailsScreen(
+                product = sampleProduct,
+                onBackClick = { navController.popBackStack() },
+                onAddToCartClick = { product ->
+                    // Добавление в корзину
+                    println("Added to cart: ${product.title}")
+                },
+                onFavoriteClick = { product, isFavorite ->
+                    // Добавление/удаление из избранного
+                    println("Product ${product.id} favorite: $isFavorite")
+                }
+            )
+        }
+
+        composable("favorites") {
+            if (userId != null) {
+                FavoriteScreen(
+                    favoriteProducts = listOf(), // Загружать из репозитория
+                    onBackClick = { navController.popBackStack() },
+                    onProductClick = { product ->
+                        navController.navigate("product_detail/${product.id}")
+                    },
+                    onRemoveFromFavorites = { product ->
+                        // Удаление из избранного
+                    }
+                )
+            } else {
+                // Показываем экран с предложением войти
+            }
+        }
     }
 }
 

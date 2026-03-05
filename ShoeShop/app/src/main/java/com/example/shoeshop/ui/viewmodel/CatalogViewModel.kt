@@ -42,6 +42,13 @@ class CatalogViewModel : ViewModel() {
                 }
             }
         }
+
+        // Добавьте это
+        viewModelScope.launch {
+            AuthManager.userId.collect { userId ->
+                // просто сохраняем, если нужно
+            }
+        }
     }
 
     fun loadCatalog() {
@@ -129,5 +136,33 @@ class CatalogViewModel : ViewModel() {
 
     fun clearError() {
         _state.update { it.copy(error = null) }
+    }
+
+    fun toggleFavorite(product: Product, isFavorite: Boolean) {
+        viewModelScope.launch {
+            try {
+                val userId = AuthManager.userId.value
+                if (userId == null) {
+                    _state.update { it.copy(error = "Пользователь не авторизован") }
+                    return@launch
+                }
+
+                val success = if (isFavorite) {
+                    repository.addToFavorites(currentToken, userId, product.id)
+                } else {
+                    repository.removeFromFavorites(currentToken, userId, product.id)
+                }
+
+                if (success) {
+                    Log.d("CatalogViewModel", "Favorite toggled successfully")
+                } else {
+                    _state.update { it.copy(error = "Не удалось изменить избранное") }
+                }
+
+            } catch (e: Exception) {
+                Log.e("CatalogViewModel", "Error toggling favorite", e)
+                _state.update { it.copy(error = "Ошибка при изменении избранного") }
+            }
+        }
     }
 }

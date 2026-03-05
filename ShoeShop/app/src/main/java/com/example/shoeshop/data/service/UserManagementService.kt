@@ -1,6 +1,7 @@
 
 
 import com.example.shoeshop.data.model.Category
+import com.example.shoeshop.data.model.FavoriteRequest
 import com.example.shoeshop.data.model.ForgotPasswordRequest
 import com.example.shoeshop.data.model.Profile
 
@@ -146,7 +147,25 @@ interface UserManagementService {
         @Header("Authorization") authorization: String,
         @Header("apikey") apiKey: String = API_KEY
     ): Response<List<Product>>
+    @Headers(
+        "apikey: $API_KEY",
+        "Authorization: Bearer $API_KEY",
+        "Content-Type: application/json"
+    )
+    @POST("rest/v1/rpc/add_to_favorites")
+    suspend fun addToFavorites(
+        @Body request: FavoriteRequest
+    ): Response<Unit>
 
+    @Headers(
+        "apikey: $API_KEY",
+        "Authorization: Bearer $API_KEY",
+        "Content-Type: application/json"
+    )
+    @POST("rest/v1/rpc/remove_from_favorites")
+    suspend fun removeFromFavorites(
+        @Body request: FavoriteRequest
+    ): Response<Unit>
 
 
 

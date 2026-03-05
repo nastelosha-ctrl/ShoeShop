@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.shoeshop.R
 import com.example.shoeshop.data.model.Category
+import com.example.shoeshop.ui.components.ProductCard
 
 import com.example.shoeshop.ui.theme.AppTypography
 import com.example.shoeshop.ui.viewmodel.CatalogViewModel
@@ -45,15 +47,45 @@ import com.example.shoeshop.ui.viewmodel.CatalogViewModel
 fun CatalogScreen(
     initialCategory: String = "Все",
     onProductClick: (Product) -> Unit,
+    onFavoriteClick: (Product, Boolean) -> Unit,
     viewModel: CatalogViewModel = viewModel()
 ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
 
     var searchQuery by rememberSaveable { mutableStateOf("") }
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
 
     LaunchedEffect(initialCategory) {
         viewModel.selectCategory(initialCategory)
+    }
+    // Обработка ошибок
+    LaunchedEffect(state.error) {
+        if (state.error != null) {
+            errorMessage = state.error ?: "Unknown error"
+            showErrorDialog = true
+        }
+    }
+
+    // Диалог ошибки
+    if (showErrorDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showErrorDialog = false
+                viewModel.clearError()
+            },
+            title = { Text("Ошибка") },
+            text = { Text(errorMessage) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showErrorDialog = false
+                    viewModel.clearError()
+                }) {
+                    Text("OK")
+                }
+            }
+        )
     }
 
     Scaffold(
@@ -98,7 +130,8 @@ fun CatalogScreen(
                 item {
                     SearchBar(
                         query = searchQuery,
-                        onQueryChange = { searchQuery = it }
+                        onQueryChange = { searchQuery = it },
+                        onFilterClick = { }
                     )
                 }
 
@@ -118,7 +151,8 @@ fun CatalogScreen(
                     item {
                         BestSellerSection(
                             products = state.bestSellers,
-                            onProductClick = onProductClick
+                            onProductClick = onProductClick,
+                            onFavoriteClick = onFavoriteClick
                         )
                     }
                 }
@@ -128,7 +162,8 @@ fun CatalogScreen(
                     ProductsSection(
                         title = if (state.selectedCategoryName == "Все") "Все товары" else state.selectedCategoryName,
                         products = state.filteredProducts,
-                        onProductClick = onProductClick
+                        onProductClick = onProductClick,
+                        onFavoriteClick = onFavoriteClick
                     )
                 }
             }
@@ -139,7 +174,8 @@ fun CatalogScreen(
 @Composable
 fun SearchBar(
     query: String,
-    onQueryChange: (String) -> Unit
+    onQueryChange: (String) -> Unit,
+    onFilterClick: () -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -151,6 +187,7 @@ fun SearchBar(
                 .height(48.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(Color(0xFFF5F5F5))
+                .clickable { /* Фокус на поиск */ }
         ) {
             Row(
                 modifier = Modifier
@@ -160,7 +197,7 @@ fun SearchBar(
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = "Поиск",
+                    contentDescription = stringResource(R.string.search),
                     tint = Color.Gray,
                     modifier = Modifier.size(20.dp)
                 )
@@ -168,7 +205,7 @@ fun SearchBar(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = "Поиск",
+                    text = stringResource(R.string.search),
                     style = AppTypography.bodyRegular14,
                     color = Color.Gray
                 )
@@ -177,18 +214,18 @@ fun SearchBar(
 
         Spacer(modifier = Modifier.width(12.dp))
 
-        // Иконка фильтра как на макете
+        // Иконка фильтра
         Box(
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.primary)
-                .clickable { },
+                .clickable { onFilterClick() },
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.sliders),
-                contentDescription = "Фильтр",
+                contentDescription = stringResource(R.string.search), // Используем существующий ресурс
                 tint = Color.White,
                 modifier = Modifier.size(24.dp)
             )
@@ -249,7 +286,8 @@ fun CategoryChip(
 @Composable
 fun BestSellerSection(
     products: List<Product>,
-    onProductClick: (Product) -> Unit
+    onProductClick: (Product) -> Unit,
+    onFavoriteClick: (Product, Boolean) -> Unit
 ) {
     Column {
         Text(
@@ -267,8 +305,9 @@ fun BestSellerSection(
             items(products) { product ->
                 ProductCard(
                     product = product,
-                    onProductClick = { onProductClick(product) }
-                )
+                    onProductClick = { onProductClick(product) },
+                    onFavoriteClick = { product, isFav ->
+                        onFavoriteClick(product, isFav)})
             }
         }
     }
@@ -278,7 +317,8 @@ fun BestSellerSection(
 @Composable
 fun ProductCard(
     product: Product,
-    onProductClick: () -> Unit
+    onProductClick: () -> Unit,
+    onFavoriteClick: (Product, Boolean) -> Unit
 ) {
     var isFavorite by remember { mutableStateOf(false) }
 
@@ -326,7 +366,8 @@ fun ProductCard(
 
                 // Кнопка избранного
                 IconButton(
-                    onClick = { isFavorite = !isFavorite },
+                    onClick = { isFavorite = !isFavorite
+                        onFavoriteClick(product, isFavorite) },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .size(32.dp)
@@ -368,7 +409,8 @@ fun ProductCard(
 fun ProductsSection(
     title: String,
     products: List<Product>,
-    onProductClick: (Product) -> Unit
+    onProductClick: (Product) -> Unit,
+    onFavoriteClick: (Product, Boolean) -> Unit
 ) {
     Column {
         Text(
@@ -385,17 +427,12 @@ fun ProductsSection(
             items(products) { product ->
                 ProductCard(
                     product = product,
-                    onProductClick = { onProductClick(product) }
+                    onProductClick = { onProductClick(product) },
+                    onFavoriteClick = { product, isFav ->
+                        onFavoriteClick(product, isFav)}
                 )
             }
         }
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun CatalogScreenPreview() {
-    CatalogScreen(
-        onProductClick = {}
-    )
-}
