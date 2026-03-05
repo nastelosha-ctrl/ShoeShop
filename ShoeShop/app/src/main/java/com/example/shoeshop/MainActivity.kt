@@ -5,16 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.shoeshop.data.navigation.NavigationApp
-
-import com.example.shoeshop.ui.screens.RegisterAccount
 import com.example.shoeshop.ui.theme.ShoeShopTheme
+import androidx.compose.foundation.layout.padding
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +22,10 @@ class MainActivity : ComponentActivity() {
             ShoeShopTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val navController = rememberNavController()
-                    NavigationApp(navController = navController)
+                    NavigationApp(
+                        navController = navController,
+                        modifier = Modifier.padding(innerPadding) // ← ПЕРЕДАЕМ innerPadding
+                    )
                 }
             }
         }

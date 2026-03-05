@@ -2,15 +2,18 @@ package com.example.shoeshop.ui.viewmodel
 
 
 import ChangePasswordRequest
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoeshop.data.RetrofitInstance
 import com.example.shoeshop.data.model.SignInRequest
+import com.example.shoeshop.data.model.SignInResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.example.shoeshop.data.model.User
 
 class SignInViewModel : ViewModel() {
     private val _signInState = MutableStateFlow<SignInState>(SignInState.Idle)
@@ -26,9 +29,18 @@ class SignInViewModel : ViewModel() {
                     SignInRequest(email, password)
                 )
 
+
                 if (response.isSuccessful) {
                     response.body()?.let { signInResponse ->
-                        // Сохраняем токен
+                        // ==== СОХРАНЯЕМ ТОКЕН В AUTHMANAGER ====
+                        AuthManager.setAuthData(
+                            userId = signInResponse.user.id,
+                            accessToken = signInResponse.access_token,
+                            refreshToken = signInResponse.refresh_token
+                        )
+                        // ====================================
+
+                        // Сохраняем токен (старые методы)
                         saveAuthToken(signInResponse.access_token)
                         saveRefreshToken(signInResponse.refresh_token)
                         saveUserData(signInResponse.user)
@@ -240,6 +252,12 @@ class SignInViewModel : ViewModel() {
     }
 }
 
+data class AuthData(
+    val userId: String,
+    val accessToken: String,
+    val refreshToken: String,
+    val email: String
+)
 sealed class SignInState {
     object Idle : SignInState()
     object Success : SignInState()

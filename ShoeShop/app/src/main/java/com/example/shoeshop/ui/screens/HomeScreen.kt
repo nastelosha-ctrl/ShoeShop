@@ -46,7 +46,10 @@ fun HomeScreen(
     onProductClick: (Product) -> Unit,
     onCartClick: () -> Unit,
     onSearchClick: () -> Unit,
-    onSettingsClick: () -> Unit = {}
+    onSettingsClick: () -> Unit = {},
+    onCatalogClick: (String) -> Unit,
+    userId: String,
+    token: String
 ) {
     var selected by rememberSaveable { mutableIntStateOf(0) }
 
@@ -55,46 +58,47 @@ fun HomeScreen(
 
     // Данные категорий
     val categories = listOf(
-        Category("Все", isSelected = true),
-        Category("Outdoor", isSelected = false),
-        Category("Tennis", isSelected = false)
+        Category(id = "all", title = "Все", isSelected = true),
+        Category(id = "outdoor", title = "Outdoor", isSelected = false),
+        Category(id = "tennis", title = "Tennis", isSelected = false)
     )
 
+    // Данные популярных товаров (адаптированы под новую модель Product)
     val popularProducts = listOf(
         Product(
             id = "1",
-            name = "Nike Air Max",
-            price = "P752.00",
-            originalPrice = "P850.00",
-            category = "BEST SELLER",
-            imageUrl = "", // Оставьте пустым или добавьте URL
-            imageResId = R.drawable.nike_zoom_winflo_3_831561_001_mens_running_shoes_11550187236tiyyje6l87_prev_ui_3 // Добавьте ресурс картинки
+            title = "Nike Air Max",
+            category_id = "outdoor",
+            cost = 752.00,
+            description = "Классические кроссовки Nike Air Max",
+            is_best_seller = true,
+            imageResId = R.drawable.nike_zoom_winflo_3_831561_001_mens_running_shoes_11550187236tiyyje6l87_prev_ui_3
         ),
         Product(
             id = "2",
-            name = "Nike Air Force 1",
-            price = "P820.00",
-            originalPrice = "P900.00",
-            category = "BEST SELLER",
-            imageUrl = "",
+            title = "Nike Air Force 1",
+            category_id = "outdoor",
+            cost = 820.00,
+            description = "Культовые Nike Air Force 1",
+            is_best_seller = true,
             imageResId = R.drawable.nike_zoom_winflo_3_831561_001_mens_running_shoes_11550187236tiyyje6l87_prev_ui_3
         ),
         Product(
             id = "3",
-            name = "Adidas Ultraboost",
-            price = "P680.00",
-            originalPrice = "P750.00",
-            category = "NEW",
-            imageUrl = "",
+            title = "Adidas Ultraboost",
+            category_id = "tennis",
+            cost = 680.00,
+            description = "Комфортные Adidas Ultraboost",
+            is_best_seller = false,
             imageResId = R.drawable.nike_zoom_winflo_3_831561_001_mens_running_shoes_11550187236tiyyje6l87_prev_ui_3
         ),
         Product(
             id = "4",
-            name = "Puma RS-X",
-            price = "P520.00",
-            originalPrice = "P600.00",
-            category = "TRENDING",
-            imageUrl = "",
+            title = "Puma RS-X",
+            category_id = "outdoor",
+            cost = 520.00,
+            description = "Стильные Puma RS-X",
+            is_best_seller = false,
             imageResId = R.drawable.nike_zoom_winflo_3_831561_001_mens_running_shoes_11550187236tiyyje6l87_prev_ui_3
         )
     )
@@ -293,6 +297,9 @@ fun HomeScreen(
                                     selectedCategory = selectedCategory,
                                     onCategorySelected = { category ->
                                         selectedCategory = category
+                                        if (category == "Outdoor") {
+                                            onCatalogClick(category)
+                                        }
                                     }
                                 )
                             }
@@ -337,7 +344,7 @@ fun HomeScreen(
                         }
                     }
                     3 -> {
-                        ProfileScreen()
+                        ProfileScreen(userId = userId, token = token)
                     }
                 }
             }
@@ -345,53 +352,7 @@ fun HomeScreen(
     }
 }
 
-@Composable
-private fun CategorySection(
-    categories: List<Category>,
-    selectedCategory: String,
-    onCategorySelected: (String) -> Unit
-) {
-    Column {
-        Text(
-            text = stringResource(id = R.string.categories),
-            style = AppTypography.bodyMedium16,
-            modifier = Modifier.padding(bottom = 12.dp)
-        )
 
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(categories) { category ->
-                CategoryChip(
-                    category = category.name,
-                    isSelected = selectedCategory == category.name,
-                    onClick = { onCategorySelected(category.name) }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun CategoryChip(
-    category: String,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    Surface(
-        modifier = Modifier
-            .clickable { onClick() }
-            .clip(RoundedCornerShape(16.dp)),
-        color = if (isSelected) MaterialTheme.colorScheme.primary else Color(0xFFF5F5F5),
-        contentColor = if (isSelected) Color.White else Color.Black
-    ) {
-        Text(
-            text = category,
-            style = AppTypography.bodyMedium16.copy(fontWeight = FontWeight.Medium),
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-        )
-    }
-}
 
 @Composable
 private fun PopularSection(
@@ -515,6 +476,9 @@ fun HomeScreenPreview() {
         onProductClick = {},
         onCartClick = {},
         onSearchClick = {},
-        onSettingsClick = {}
+        onSettingsClick = {},
+        onCatalogClick = {},
+        userId = "preview_user",
+        token = "preview_token"
     )
 }
