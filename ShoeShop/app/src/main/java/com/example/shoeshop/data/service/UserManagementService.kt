@@ -1,28 +1,26 @@
 
-
-import com.example.shoeshop.data.model.Category
-import com.example.shoeshop.data.model.FavoriteRequest
+import com.example.shoeshop.data.model.AddToCartRequest
+import com.example.shoeshop.data.model.Cart
+import com.example.shoeshop.data.model.CreateOrderItemRequest
+import com.example.shoeshop.data.model.CreateOrderRequest
+import com.example.shoeshop.data.model.Favorite
 import com.example.shoeshop.data.model.ForgotPasswordRequest
+import com.example.shoeshop.data.model.Order
+import com.example.shoeshop.data.model.OrderItem
+import com.example.shoeshop.data.model.Payment
 import com.example.shoeshop.data.model.Profile
-
 import com.example.shoeshop.data.model.ResendOTPResponse
 import com.example.shoeshop.data.model.SignInRequest
 import com.example.shoeshop.data.model.SignInResponse
 import com.example.shoeshop.data.model.SignUpRequest
 import com.example.shoeshop.data.model.SignUpResponse
+import com.example.shoeshop.data.model.UpdateCartRequest
 import com.example.shoeshop.data.model.UpdateProfileRequest
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Headers
-import retrofit2.http.PATCH
-import retrofit2.http.POST
-import retrofit2.http.PUT
-import retrofit2.http.Query
+import retrofit2.http.*
 
 const val API_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhud2Vpb2p0enFqbnNkd3JycmZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MzUxNDksImV4cCI6MjA4ODIxMTE0OX0.MFu1Vr80Yl_7UFp7wBNfbi56ZONW4ZSGo6SsKePmONY"
+
 interface UserManagementService {
 
     @Headers(
@@ -147,27 +145,141 @@ interface UserManagementService {
         @Header("Authorization") authorization: String,
         @Header("apikey") apiKey: String = API_KEY
     ): Response<List<Product>>
-    @Headers(
-        "apikey: $API_KEY",
-        "Authorization: Bearer $API_KEY",
-        "Content-Type: application/json"
-    )
-    @POST("rest/v1/rpc/add_to_favorites")
-    suspend fun addToFavorites(
-        @Body request: FavoriteRequest
+
+
+    // ===== FAVORITE METHODS =====
+
+    @GET("rest/v1/favourite")
+    suspend fun getFavorites(
+        @Query("user_id") filter: String,
+        @Header("Authorization") authorization: String,
+        @Header("apikey") apiKey: String = API_KEY
+    ): Response<List<Favorite>>
+
+    @POST("rest/v1/favourite")
+    suspend fun addToFavorite(
+        @Body favorite: Map<String, String>,
+        @Header("Authorization") authorization: String,
+        @Header("apikey") apiKey: String = API_KEY,
+        @Header("Prefer") prefer: String = "return=representation"
+    ): Response<List<Favorite>>
+
+    @DELETE("rest/v1/favourite")
+    suspend fun removeFromFavorite(
+        @Query("id") filter: String,
+        @Header("Authorization") authorization: String,
+        @Header("apikey") apiKey: String = API_KEY
     ): Response<Unit>
 
-    @Headers(
-        "apikey: $API_KEY",
-        "Authorization: Bearer $API_KEY",
-        "Content-Type: application/json"
-    )
-    @POST("rest/v1/rpc/remove_from_favorites")
-    suspend fun removeFromFavorites(
-        @Body request: FavoriteRequest
+
+    @GET("rest/v1/products")
+    suspend fun getProductById(
+        @Query("id") filter: String,
+        @Header("Authorization") authorization: String,
+        @Header("apikey") apiKey: String = API_KEY
+    ): Response<List<Product>>
+
+    // ===== CART METHODS =====
+
+    @GET("rest/v1/cart")
+    suspend fun getCart(
+        @Query("user_id") filter: String,
+        @Header("Authorization") authorization: String,
+        @Header("apikey") apiKey: String = API_KEY
+    ): Response<List<Cart>>
+
+    @POST("rest/v1/cart")
+    suspend fun addToCart(
+        @Body cartItem: AddToCartRequest,  // ← Используем импортированный класс
+        @Header("Authorization") authorization: String,
+        @Header("apikey") apiKey: String = API_KEY,
+        @Header("Prefer") prefer: String = "return=representation"
+    ): Response<List<Cart>>
+
+    @PATCH("rest/v1/cart")
+    suspend fun updateCartItem(
+        @Query("id") filter: String,
+        @Body updates: UpdateCartRequest,  // ← Используем импортированный класс
+        @Header("Authorization") authorization: String,
+        @Header("apikey") apiKey: String = API_KEY,
+        @Header("Prefer") prefer: String = "return=representation"
+    ): Response<List<Cart>>
+
+    @DELETE("rest/v1/cart")
+    suspend fun removeFromCart(
+        @Query("id") filter: String,
+        @Header("Authorization") authorization: String,
+        @Header("apikey") apiKey: String = API_KEY
     ): Response<Unit>
 
+    // ===== ORDER METHODS =====
+
+    @GET("rest/v1/orders")
+    suspend fun getOrders(
+        @Query("user_id") filter: String,
+        @Header("Authorization") authorization: String,
+        @Header("apikey") apiKey: String = API_KEY
+    ): Response<List<Order>>
+
+    @POST("rest/v1/orders")
+    suspend fun createOrder(
+        @Body order: CreateOrderRequest,
+        @Header("Authorization") authorization: String,
+        @Header("apikey") apiKey: String = API_KEY,
+        @Header("Prefer") prefer: String = "return=representation"
+    ): Response<List<Order>>
+
+    @POST("rest/v1/orders_items")
+    suspend fun createOrderItems(
+        @Body orderItems: List<CreateOrderItemRequest>,
+        @Header("Authorization") authorization: String,
+        @Header("apikey") apiKey: String = API_KEY,
+        @Header("Prefer") prefer: String = "return=representation"
+    ): Response<List<OrderItem>>
+
+// ===== PAYMENT METHODS =====
+
+    @GET("rest/v1/payments")
+    suspend fun getPayments(
+        @Query("user_id") filter: String,
+        @Header("Authorization") authorization: String,
+        @Header("apikey") apiKey: String = API_KEY
+    ): Response<List<Payment>>
+
+// ===== ORDER METHODS (дополнительные) =====
+
+    @GET("rest/v1/orders")
+    suspend fun getUserOrders(
+        @Query("user_id") filter: String,
+        @Header("Authorization") authorization: String,
+        @Header("apikey") apiKey: String = API_KEY,
+        @Header("Prefer") prefer: String = "order=created_at.desc"
+    ): Response<List<Order>>
+
+    @GET("rest/v1/orders_items")
+    suspend fun getOrderItems(
+        @Query("order_id") filter: String,
+        @Header("Authorization") authorization: String,
+        @Header("apikey") apiKey: String = API_KEY
+    ): Response<List<OrderItem>>
 
 
+    @PATCH("rest/v1/orders")
+    suspend fun updateOrderStatus(
+        @Query("id") filter: String,
+        @Body updates: Map<String, Any>,
+        @Header("Authorization") authorization: String,
+        @Header("apikey") apiKey: String = API_KEY
+    ): Response<List<Order>>
+
+    // Для получения одного заказа с фильтром по id
+    @GET("rest/v1/orders")
+    suspend fun getOrderById(
+        @Query("id") filter: String,
+        @Header("Authorization") authorization: String,
+        @Header("apikey") apiKey: String = API_KEY
+    ): Response<List<Order>>
 
 }
+
+

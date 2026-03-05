@@ -1,11 +1,11 @@
-// ui/viewmodel/ProfileViewModel.kt
 package com.example.shoeshop.ui.viewmodel
 
-import android.net.Uri
+
+
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.shoeshop.data.RetrofitInstance
+import com.example.shoeshop.data.AuthManager
 import com.example.shoeshop.data.model.Profile
 import com.example.shoeshop.data.repository.ProfileRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,14 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.net.ConnectException
-import java.net.SocketTimeoutException
-import kotlin.collections.plus
-import kotlin.text.firstOrNull
-import kotlin.text.ifBlank
-import kotlin.text.isBlank
-import kotlin.text.orEmpty
-import kotlin.to
+
 data class ProfileState(
     val isLoading: Boolean = false,
     val isSaving: Boolean = false,
@@ -135,7 +128,9 @@ class ProfileViewModel : ViewModel() {
                         onComplete(false, "Ошибка при обновлении")
                     }
                 } else {
-                    // Создаем новый профиль
+                    // Создаем новый профиль - нужно получить email из AuthManager
+                    val userEmail = AuthManager.email.value ?: ""
+
                     val newProfile = Profile(
                         user_id = currentUserId,
                         firstname = currentState.firstName,

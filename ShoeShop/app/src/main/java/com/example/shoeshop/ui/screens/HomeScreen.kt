@@ -1,8 +1,8 @@
-// screens/HomeScreen.kt
 package com.example.shoeshop.ui.screens
 
-
+import Category
 import Product
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,20 +13,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
-import com.example.shoeshop.R
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -34,11 +30,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.shoeshop.data.model.Category
+import com.example.shoeshop.R
+import com.example.shoeshop.data.CartManager
 import com.example.shoeshop.ui.components.ProductCard
-
-
 import com.example.shoeshop.ui.theme.AppTypography
+import com.example.shoeshop.ui.viewmodel.FavoritesManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,10 +44,23 @@ fun HomeScreen(
     onSearchClick: () -> Unit,
     onSettingsClick: () -> Unit = {},
     onCatalogClick: (String) -> Unit,
+    onFavoriteClick: () -> Unit,
     userId: String,
     token: String
 ) {
     var selected by rememberSaveable { mutableIntStateOf(0) }
+    val context = LocalContext.current
+
+    // Инициализируем FavoritesManager и CartManager
+    LaunchedEffect(userId, token) {
+        if (userId.isNotEmpty() && token.isNotEmpty()) {
+            FavoritesManager.init(userId, token)
+            CartManager.init(userId, token)
+        }
+    }
+
+    // Получаем состояние избранного
+    val favoriteIds by FavoritesManager.favoriteProductIds.collectAsState()
 
     // Состояние для выбранной категории
     var selectedCategory by remember { mutableStateOf("Все") }
@@ -63,42 +72,33 @@ fun HomeScreen(
         Category(id = "tennis", title = "Tennis", isSelected = false)
     )
 
-    // Данные популярных товаров (адаптированы под новую модель Product)
+    // Данные популярных товаров
     val popularProducts = listOf(
         Product(
-            id = "1",
-            title = "Nike Air Max",
+            id = "6478da8e-87e6-4a7a-821c-ac38dd861cec",
+            title = "PUMA CA Pro Classic",
             category_id = "outdoor",
-            cost = 752.00,
-            description = "Классические кроссовки Nike Air Max",
+            cost = 13999.00,
+            description = "Ретро-кроссовки в стиле баскетбола",
             is_best_seller = true,
             imageResId = R.drawable.nike_zoom_winflo_3_831561_001_mens_running_shoes_11550187236tiyyje6l87_prev_ui_3
         ),
         Product(
-            id = "2",
-            title = "Nike Air Force 1",
+            id = "3fb5c391-a841-45fb-9c7a-2f74d11a4bfa",
+            title = "Adidas Ozmillen",
             category_id = "outdoor",
-            cost = 820.00,
-            description = "Культовые Nike Air Force 1",
+            cost = 20599.00,
+            description = "Легкие и дышащие беговые кроссовки",
             is_best_seller = true,
             imageResId = R.drawable.nike_zoom_winflo_3_831561_001_mens_running_shoes_11550187236tiyyje6l87_prev_ui_3
         ),
         Product(
-            id = "3",
-            title = "Adidas Ultraboost",
-            category_id = "tennis",
-            cost = 680.00,
-            description = "Комфортные Adidas Ultraboost",
-            is_best_seller = false,
-            imageResId = R.drawable.nike_zoom_winflo_3_831561_001_mens_running_shoes_11550187236tiyyje6l87_prev_ui_3
-        ),
-        Product(
-            id = "4",
-            title = "Puma RS-X",
+            id = "63d56e11-2769-4980-96df-dc11ea70148d",
+            title = "PUMA Orkid II",
             category_id = "outdoor",
-            cost = 520.00,
-            description = "Стильные Puma RS-X",
-            is_best_seller = false,
+            cost = 14999.00,
+            description = "Женские кроссовки для тренировок",
+            is_best_seller = true,
             imageResId = R.drawable.nike_zoom_winflo_3_831561_001_mens_running_shoes_11550187236tiyyje6l87_prev_ui_3
         )
     )
@@ -110,7 +110,6 @@ fun HomeScreen(
                     .height(80.dp)
                     .fillMaxWidth()
             ) {
-                // Фоновая картинка
                 Image(
                     painter = painterResource(id = R.drawable.vector_1789),
                     contentDescription = null,
@@ -118,7 +117,6 @@ fun HomeScreen(
                     modifier = Modifier.matchParentSize()
                 )
 
-                // Контент меню поверх картинки
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -127,7 +125,6 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Левая группа иконок
                     Row {
                         IconButton(onClick = { selected = 0 }) {
                             Icon(
@@ -139,7 +136,10 @@ fun HomeScreen(
 
                         Spacer(modifier = Modifier.width(8.dp))
 
-                        IconButton(onClick = { selected = 1 }) {
+                        IconButton(onClick = {
+                            selected = 1
+                            onFavoriteClick()
+                        }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.favorite),
                                 contentDescription = "Favorites",
@@ -148,7 +148,6 @@ fun HomeScreen(
                         }
                     }
 
-                    // Центральная кнопка корзины (выше других кнопок)
                     Box(
                         modifier = Modifier
                             .offset(y = (-20).dp)
@@ -156,7 +155,10 @@ fun HomeScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         FloatingActionButton(
-                            onClick = { onCartClick() },
+                            onClick = {
+                                onCartClick()
+                                selected = 2
+                            },
                             modifier = Modifier.size(56.dp),
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.onPrimary
@@ -169,7 +171,6 @@ fun HomeScreen(
                         }
                     }
 
-                    // Правая группа иконок
                     Row {
                         IconButton(onClick = { selected = 2 }) {
                             Icon(
@@ -199,7 +200,6 @@ fun HomeScreen(
                 .fillMaxSize()
                 .background(Color.White)
         ) {
-            // Верхняя панель с заголовком, поиском и настройками (только для главной вкладки)
             if (selected == 0) {
                 Column(
                     modifier = Modifier
@@ -215,12 +215,10 @@ fun HomeScreen(
                         textAlign = TextAlign.Center
                     )
 
-                    // Строка с полем поиска и иконкой настроек
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Поле поиска
                         Box(
                             modifier = Modifier
                                 .weight(1f)
@@ -259,7 +257,6 @@ fun HomeScreen(
 
                         Spacer(modifier = Modifier.width(12.dp))
 
-                        // Иконка настроек с круглым голубым фоном
                         Box(
                             modifier = Modifier
                                 .size(48.dp)
@@ -279,7 +276,6 @@ fun HomeScreen(
                 }
             }
 
-            // Основной контент
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -290,7 +286,6 @@ fun HomeScreen(
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                             contentPadding = PaddingValues(16.dp)
                         ) {
-                            // Секция: Категории
                             item {
                                 CategorySection(
                                     categories = categories,
@@ -304,33 +299,46 @@ fun HomeScreen(
                                 )
                             }
 
-                            // Секция: Популярное
                             item {
                                 PopularSection(
                                     products = popularProducts,
                                     onProductClick = onProductClick,
-                                    onFavoriteClick = { product ->
-                                        // Обработка добавления в избранное
+                                    favoriteIds = favoriteIds,
+                                    onFavoriteClick = { productId ->
+                                        FavoritesManager.toggleFavorite(productId) { success ->
+                                            if (success) {
+                                                // Можно показать уведомление
+                                            }
+                                        }
+                                    },
+                                    onAddToCart = { product ->
+                                        // Добавление в корзину
+                                        CartManager.addToCart(product.id) { success ->
+                                            if (success) {
+                                                Toast.makeText(
+                                                    context,
+                                                    "${product.title} добавлен в корзину",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            } else {
+                                                Toast.makeText(
+                                                    context,
+                                                    "Ошибка добавления в корзину",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        }
                                     }
                                 )
                             }
 
-                            // Секция: Акции
                             item {
                                 PromotionsSection()
                             }
                         }
                     }
                     1 -> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "Избранное",
-                                style = AppTypography.headingRegular32
-                            )
-                        }
+                        Box(modifier = Modifier.fillMaxSize())
                     }
                     2 -> {
                         Box(
@@ -352,16 +360,15 @@ fun HomeScreen(
     }
 }
 
-
-
 @Composable
 private fun PopularSection(
     products: List<Product>,
     onProductClick: (Product) -> Unit,
-    onFavoriteClick: (Product) -> Unit
+    favoriteIds: Set<String>,
+    onFavoriteClick: (String) -> Unit,
+    onAddToCart: (Product) -> Unit
 ) {
     Column {
-        // Заголовок раздела
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -383,20 +390,23 @@ private fun PopularSection(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Список товаров
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(products) { product ->
                 ProductCard(
                     product = product,
+                    isFavorite = favoriteIds.contains(product.id),
                     onProductClick = { onProductClick(product) },
-                    onFavoriteClick = { onFavoriteClick(product) }
+                    onFavoriteClick = { onFavoriteClick(product.id) },
+                    onAddToCart = { onAddToCart(product) }
                 )
             }
         }
     }
 }
+
+
 
 @Composable
 private fun PromotionsSection() {
@@ -422,7 +432,6 @@ private fun PromotionsSection() {
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Левая часть с текстом
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
@@ -447,7 +456,6 @@ private fun PromotionsSection() {
                     )
                 }
 
-                // Правая часть с кнопкой
                 TextButton(
                     onClick = {
                         // Навигация на акции
@@ -467,18 +475,4 @@ private fun PromotionsSection() {
             }
         }
     }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen(
-        onProductClick = {},
-        onCartClick = {},
-        onSearchClick = {},
-        onSettingsClick = {},
-        onCatalogClick = {},
-        userId = "preview_user",
-        token = "preview_token"
-    )
 }

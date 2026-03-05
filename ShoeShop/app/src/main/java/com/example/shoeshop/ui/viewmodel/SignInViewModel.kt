@@ -1,19 +1,14 @@
-package com.example.shoeshop.ui.viewmodel
 
-
-import ChangePasswordRequest
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.shoeshop.data.AuthManager
 import com.example.shoeshop.data.RetrofitInstance
 import com.example.shoeshop.data.model.SignInRequest
-import com.example.shoeshop.data.model.SignInResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import com.example.shoeshop.data.model.User
 
 class SignInViewModel : ViewModel() {
     private val _signInState = MutableStateFlow<SignInState>(SignInState.Idle)
@@ -32,18 +27,13 @@ class SignInViewModel : ViewModel() {
 
                 if (response.isSuccessful) {
                     response.body()?.let { signInResponse ->
-                        // ==== СОХРАНЯЕМ ТОКЕН В AUTHMANAGER ====
+                        // Сохраняем в AuthManager с email
                         AuthManager.setAuthData(
                             userId = signInResponse.user.id,
                             accessToken = signInResponse.access_token,
-                            refreshToken = signInResponse.refresh_token
+                            refreshToken = signInResponse.refresh_token,
+                            email = signInResponse.user.email // Добавляем email
                         )
-                        // ====================================
-
-                        // Сохраняем токен (старые методы)
-                        saveAuthToken(signInResponse.access_token)
-                        saveRefreshToken(signInResponse.refresh_token)
-                        saveUserData(signInResponse.user)
 
                         Log.v("signIn", "User authenticated: ${signInResponse.user.email}")
                         _signInState.value = SignInState.Success

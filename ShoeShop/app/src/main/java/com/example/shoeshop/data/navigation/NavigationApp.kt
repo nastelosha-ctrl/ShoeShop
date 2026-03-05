@@ -1,22 +1,43 @@
-package com.example.shoeshop.data.navigation
 
-import Product
-import android.telecom.Call
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.Button
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.shoeshop.ui.screens.*
-
+import androidx.navigation.compose.rememberNavController
+import com.example.shoeshop.data.AuthManager
+import com.example.shoeshop.ui.screens.CartScreen
+import com.example.shoeshop.ui.screens.CatalogScreen
+import com.example.shoeshop.ui.screens.CreateNewPasswordScreen
+import com.example.shoeshop.ui.screens.DetailsScreen
+import com.example.shoeshop.ui.screens.EmailVerificationScreen
+import com.example.shoeshop.ui.screens.FavoriteScreen
+import com.example.shoeshop.ui.screens.ForgotPasswordScreen
+import com.example.shoeshop.ui.screens.HomeScreen
+import com.example.shoeshop.ui.screens.OnboardScreen
+import com.example.shoeshop.ui.screens.ProfileScreen
+import com.example.shoeshop.ui.screens.RecoveryVerificationScreen
+import com.example.shoeshop.ui.screens.RegisterAccount
+import com.example.shoeshop.ui.screens.SignInScreen
+import com.example.shoeshop.ui.viewmodel.CatalogViewModel
 
 @Composable
-fun NavigationApp(navController: NavHostController, modifier: Modifier = Modifier ) {
+fun NavigationApp(navController: NavHostController) {
+
     // Получаем состояние авторизации из AuthManager
     val isAuthenticated by AuthManager.isAuthenticated.collectAsState()
     val userId by AuthManager.userId.collectAsState()
@@ -30,7 +51,6 @@ fun NavigationApp(navController: NavHostController, modifier: Modifier = Modifie
     }
 
     NavHost(
-        modifier = modifier,
         navController = navController,
         startDestination = if (isAuthenticated) "home" else "start_menu"
     ) {
@@ -117,6 +137,9 @@ fun NavigationApp(navController: NavHostController, modifier: Modifier = Modifie
                     // Переходим в каталог с выбранной категорией
                     navController.navigate("catalog/Outdoor")
                 },
+                onFavoriteClick = {
+                    navController.navigate("favorite")
+                },
                 userId = userId ?: "",  // Передаем userId из AuthManager
                 token = accessToken ?: "" // Передаем token из AuthManager
             )
@@ -141,66 +164,69 @@ fun NavigationApp(navController: NavHostController, modifier: Modifier = Modifie
             }
         }
 
+        // Добавьте другие экраны по необходимости
+        composable("product_detail/{productId}") { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString("productId") ?: ""
+            // Экран деталей товара
+            Text("Детали товара $productId")
+        }
+
+        composable("cart") {
+            // Экран корзины
+            Text("Корзина")
+        }
+
+        composable("search") {
+            // Экран поиска
+            Text("Поиск")
+        }
+
+        composable("settings") {
+            // Экран настроек
+            Text("Настройки")
+        }
+
         composable("catalog/{category}") { backStackEntry ->
-            val category = backStackEntry.arguments?.getString("category") ?: "Outdoor"
+            val category = backStackEntry.arguments?.getString("category") ?: "Все"
             CatalogScreen(
                 initialCategory = category,
                 onProductClick = { product ->
                     navController.navigate("product_detail/${product.id}")
-                },
-                onFavoriteClick = { product, isFavorite ->
-                    // Здесь нужно получить ViewModel и вызвать toggleFavorite
-                    // Лучше передавать это через колбэк, который будет вызывать ViewModel
+                }
+            )
+        }
+
+        composable("favorite") {
+            FavoriteScreen(
+                onProductClick = { product ->
+                    navController.navigate("product_detail/${product.id}")
                 }
             )
         }
 
         composable("product_detail/{productId}") { backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId") ?: ""
-
-            // Получаем продукт из аргументов или загружаем
-            // Для демо создаем тестовый продукт
-            val sampleProduct = Product(
-                id = productId,
-                title = "Nike Air Max 270",
-                cost = 179.39,
-                description = "Вставка Max Air 270 Обеспечивает Непревзойденный Комфорт В Течение Всего Дня. Изящный Дизайн с верхом из сетки и накладками обеспечивает воздухопроницаемость и поддержку. Идеально подходит для повседневной носки и активного отдыха.",
-                category_id = "76ab9d74-7d5b-4dee-9c67-6ed4019fa202",
-                is_best_seller = true,
-                imageUrl = null,
-                imageResId = null
-            )
-
             DetailsScreen(
-                product = sampleProduct,
+                productId = productId,
                 onBackClick = { navController.popBackStack() },
-                onAddToCartClick = { product ->
-                    // Добавление в корзину
-                    println("Added to cart: ${product.title}")
-                },
-                onFavoriteClick = { product, isFavorite ->
-                    // Добавление/удаление из избранного
-                    println("Product ${product.id} favorite: $isFavorite")
-                }
+                onCartClick = { navController.navigate("cart") }
             )
         }
 
-        composable("favorites") {
-            if (userId != null) {
-                FavoriteScreen(
-                    favoriteProducts = listOf(), // Загружать из репозитория
-                    onBackClick = { navController.popBackStack() },
-                    onProductClick = { product ->
-                        navController.navigate("product_detail/${product.id}")
-                    },
-                    onRemoveFromFavorites = { product ->
-                        // Удаление из избранного
-                    }
-                )
-            } else {
-                // Показываем экран с предложением войти
-            }
+        composable("cart") {
+            CartScreen(
+                onBackClick = { navController.popBackStack() },
+                onCheckoutClick = {
+                    navController.navigate("checkout")
+                }
+            )
         }
     }
 }
 
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun NavigationAppPreview() {
+    val navController = rememberNavController()
+    NavigationApp(navController = navController)
+}

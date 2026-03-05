@@ -1,6 +1,6 @@
 package com.example.shoeshop.ui.screens
 
-import ForgotPasswordViewModel
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,6 +21,8 @@ import com.example.shoeshop.ui.components.BackButton
 import com.example.shoeshop.ui.components.PasswordResetAlertDialog
 import com.example.shoeshop.ui.theme.AppTypography
 import com.example.shoeshop.ui.theme.ShoeShopTheme
+import com.example.shoeshop.ui.viewmodel.ForgotPasswordViewModel
+import com.example.shoeshop.ui.viewmodel.PasswordRecoveryState
 import kotlinx.coroutines.launch
 import kotlin.text.isNotEmpty
 

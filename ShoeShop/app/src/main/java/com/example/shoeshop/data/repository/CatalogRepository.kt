@@ -1,10 +1,9 @@
 package com.example.shoeshop.data.repository
 
+import Category
 import Product
 import android.util.Log
 import com.example.shoeshop.data.RetrofitInstance
-import com.example.shoeshop.data.model.Category
-import com.example.shoeshop.data.model.FavoriteRequest
 
 class CatalogRepository {
 
@@ -74,33 +73,6 @@ class CatalogRepository {
         } catch (e: Exception) {
             Log.e(tag, "Exception loading products", e)
             null
-        }
-    }
-    suspend fun addToFavorites(token: String, userId: String, productId: String): Boolean {
-        return try {
-            val request = FavoriteRequest(
-                user_id = userId,
-                product_id = productId
-            )
-            val response = service.addToFavorites(request)
-            response.isSuccessful
-        } catch (e: Exception) {
-            Log.e(tag, "Error adding to favorites", e)
-            false
-        }
-    }
-
-    suspend fun removeFromFavorites(token: String, userId: String, productId: String): Boolean {
-        return try {
-            val request = FavoriteRequest(
-                user_id = userId,
-                product_id = productId
-            )
-            val response = service.removeFromFavorites(request)
-            response.isSuccessful
-        } catch (e: Exception) {
-            Log.e(tag, "Error removing from favorites", e)
-            false
         }
     }
 }

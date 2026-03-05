@@ -1,5 +1,3 @@
-package com.example.shoeshop.data.model
-
 import kotlinx.serialization.Serializable
 
 @Serializable

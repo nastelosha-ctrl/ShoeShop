@@ -1,3 +1,6 @@
+package com.example.shoeshop.ui.viewmodel
+
+
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +17,10 @@ import kotlin.text.contains
 import kotlin.text.matches
 import kotlin.text.toRegex
 
+
+// Серафимова Екатерина Сергеевна
+// 03.03.2026
+// Назначение: экран для сброса пароля
 class ForgotPasswordViewModel : ViewModel() {
 
     // UI State

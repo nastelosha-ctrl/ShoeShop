@@ -1,6 +1,7 @@
 package com.example.shoeshop.ui.screens
 
 
+import SignInViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -30,16 +31,13 @@ import com.example.shoeshop.ui.components.BackButton
 import com.example.shoeshop.ui.components.DisableButton
 import com.example.shoeshop.ui.theme.AppTypography
 import com.example.shoeshop.ui.theme.ShoeShopTheme
-import com.example.shoeshop.ui.viewmodel.ChangePasswordState
-import com.example.shoeshop.ui.viewmodel.SignInState
-import com.example.shoeshop.ui.viewmodel.SignInViewModel
 import kotlin.let
 import kotlin.text.isNotEmpty
 
 @Composable
 fun CreateNewPasswordScreen(
     modifier: Modifier = Modifier,
-    userToken: String? = null, // Добавьте параметр для токена
+    userToken: String? = null,
     onPasswordChanged: () -> Unit = {},
     onForgotPasswordClick: () -> Unit = {},
     onSignInClick: () -> Unit = {},
